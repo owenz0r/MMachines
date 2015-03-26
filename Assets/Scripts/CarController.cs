@@ -9,9 +9,10 @@ public class CarController : MonoBehaviour {
 	public float maxReverse = 5.0f;
 	public float maxTorque = 5.0f;
 	public float maxTraction = 5.0f;
-	public Transform startPosition;
+
 	public CarManager carManager;
 	public CameraController camController;
+	public CheckpointManager checkpointManager;
 	
 	float m_accel;
 	float m_reverse;
@@ -22,21 +23,21 @@ public class CarController : MonoBehaviour {
 	bool m_dead;
 	Transform m_lastCheckpoint;
 	int m_lastCheckpointId = -1;
+	Transform m_startPosition;
 
 	void Start()
 	{
 		m_freeze = true;
 		m_dead = false;
-		Reset();
 	}
 
 	public void Reset()
 	{
 		StopCoroutine( "Fall" );
 		StopCoroutine( "Dance" );
-		transform.localScale = startPosition.localScale;
-		transform.position = startPosition.position;
-		transform.rotation = startPosition.rotation;
+		transform.localScale = m_startPosition.localScale;
+		transform.position = m_startPosition.position;
+		transform.rotation = m_startPosition.rotation;
 		GetComponent<Rigidbody2D>().velocity = Vector3.zero;
 		GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
 		m_falling = false;
@@ -138,7 +139,7 @@ public class CarController : MonoBehaviour {
 			yield return new WaitForSeconds(0.1f);
 		}
 
-		if( !camController.IsOutOfBounds( startPosition.position ) )
+		if( !camController.IsOutOfBounds( m_startPosition.position ) )
 		{
 			Reset ();
 		} else {
@@ -171,17 +172,18 @@ public class CarController : MonoBehaviour {
 		return m_falling;
 	}
 
-	public void setCheckpoint( Transform checkpoint )
+	public void setCheckpoint( Transform checkpoint, int id )
 	{
+		print ( id );
 		m_lastCheckpoint = checkpoint;
-		m_lastCheckpointId = checkpoint.GetComponent<CheckpointController>().id;
+		m_lastCheckpointId = id;
 		if( playerNumber == "1" )
 		{
-			startPosition = checkpoint.GetChild( 0 );
+			m_startPosition = checkpoint.GetChild( 0 );
 		}
 		else if ( playerNumber == "2" )
 		{
-			startPosition = checkpoint.GetChild( 1 );
+			m_startPosition = checkpoint.GetChild( 1 );
 		}
 	}
 

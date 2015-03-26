@@ -17,10 +17,10 @@ public class CarManager : MonoBehaviour {
 			car.GetComponent<CarController>().freeze();
 	}
 
-	public void updateAllCheckpoints( Transform checkpoint )
+	public void updateAllCheckpoints( Transform checkpoint, int id )
 	{
 		foreach( Transform car in carArray )
-			car.GetComponent<CarController>().setCheckpoint( checkpoint );
+			car.GetComponent<CarController>().setCheckpoint( checkpoint, id );
 	}
 
 	public int numAlive()

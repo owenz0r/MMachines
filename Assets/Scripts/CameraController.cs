@@ -17,10 +17,13 @@ public class CameraController : MonoBehaviour {
 	public float yEdgeMin = 0.05f;
 	public float yEdgeMax = 0.95f;
 	public CarManager carManager;
+	public CheckpointManager checkpointManager;
 
 	void Start()
 	{
-		StartCoroutine( "Countdown" );
+		checkpointManager.processCheckpoints();
+		carManager.resetAll();
+		StartCoroutine( Countdown () );
 	}
 
 	// Update is called once per frame
@@ -32,8 +35,7 @@ public class CameraController : MonoBehaviour {
 			// only check cars that are not falling already
 			if( player.GetComponent<CarController>().isActive() )
 			{
-				Vector3 viewportPos = Camera.main.WorldToViewportPoint( player.position );
-				if( IsOutOfBounds( viewportPos ) )
+				if( IsOutOfBounds( player.position ) )
 				{
 					Transform front = players[0];
 					int max = front.GetComponent<CarController>().lastCheckpointId();
@@ -94,7 +96,7 @@ public class CameraController : MonoBehaviour {
 
 	void resumeAfterScore()
 	{
-		carManager.updateAllCheckpoints( m_restartCheckpoint );
+		carManager.updateAllCheckpoints( m_restartCheckpoint, carManager.getWinner().GetComponent<CarController>().lastCheckpointId() );
 		carManager.resetAll();
 		carManager.freezeAll();
 		StartCoroutine( CenterOn( averagePosition(), 1.0f, wait: 0.0f, callback: startCountdown ) );
@@ -118,9 +120,10 @@ public class CameraController : MonoBehaviour {
 
 	public bool IsOutOfBounds( Vector3 pos )
 	{
-		if( pos.x < xEdgeMin || pos.x > xEdgeMax )
+		Vector3 viewportPos = Camera.main.WorldToViewportPoint( pos );
+		if( viewportPos.x < xEdgeMin || viewportPos.x > xEdgeMax )
 			return true;
-		if( pos.y < yEdgeMin || pos.y > yEdgeMax )
+		if( viewportPos.y < yEdgeMin || viewportPos.y > yEdgeMax )
 			return true;
 		return false;
 	}
@@ -149,7 +152,6 @@ public class CameraController : MonoBehaviour {
 		m_tracking = false;
 		Vector3 dist = new Vector3( target.x, target.y, 0.0f ) * -1.0f;
 		Vector3 startPos = transform.position;
-		Vector3 endPos = transform.position + dist;
 		float totalTime = 0.0f;
 		while( totalTime < seconds )
 		{
