@@ -24,6 +24,8 @@ public class CarController : MonoBehaviour {
 	Transform m_lastCheckpoint;
 	int m_lastCheckpointId = -1;
 	Transform m_startPosition;
+	int m_lap = 0;
+	IEnumerator m_fallRoutine;
 
 	void Start()
 	{
@@ -124,6 +126,8 @@ public class CarController : MonoBehaviour {
 	
 	public void StartDance( Action callback = null )
 	{
+		if( m_falling )
+			StopFalling();
 		if( !m_falling && !m_dancing && !m_freeze )
 			StartCoroutine( Dance ( callback ) );
 	}
@@ -139,7 +143,8 @@ public class CarController : MonoBehaviour {
 			yield return new WaitForSeconds(0.1f);
 		}
 
-		if( !camController.IsOutOfBounds( m_startPosition.position ) )
+		// if we can reset, or we're the last active player
+		if( !camController.IsOutOfBounds( m_startPosition.position ) || ( carManager.numAlive() == 1 && m_dead == false ) )
 		{
 			Reset ();
 		} else {
@@ -151,8 +156,18 @@ public class CarController : MonoBehaviour {
 
 	public void StartFall( Action callback = null )
 	{
+
 		if( !m_falling && !m_dancing && !m_freeze )
-			StartCoroutine( Fall ( callback ) );
+		{
+			m_fallRoutine = Fall ( callback );
+			StartCoroutine( m_fallRoutine );
+		}
+	}
+
+	public void StopFalling()
+	{
+		StopCoroutine( m_fallRoutine );
+		m_falling = false;
 	}
 
 	public void freeze()
@@ -167,16 +182,11 @@ public class CarController : MonoBehaviour {
 		m_freeze = false;
 	}
 
-	public bool isFalling()
+	public void setCheckpoint( Transform checkpoint )
 	{
-		return m_falling;
-	}
-
-	public void setCheckpoint( Transform checkpoint, int id )
-	{
-		print ( id );
 		m_lastCheckpoint = checkpoint;
-		m_lastCheckpointId = id;
+		m_lastCheckpointId = checkpoint.GetComponent<CheckpointController>().id;
+		print ( m_lastCheckpointId );
 		if( playerNumber == "1" )
 		{
 			m_startPosition = checkpoint.GetChild( 0 );
@@ -184,6 +194,22 @@ public class CarController : MonoBehaviour {
 		else if ( playerNumber == "2" )
 		{
 			m_startPosition = checkpoint.GetChild( 1 );
+		}
+	}
+	
+	public void matchCheckpoint( CarController other )
+	{
+		m_lastCheckpoint = other.lastCheckpoint();
+		m_lastCheckpointId = other.lastCheckpointId();
+		lap = other.lap;
+		print ( m_lastCheckpointId );
+		if( playerNumber == "1" )
+		{
+			m_startPosition = m_lastCheckpoint.GetChild( 0 );
+		}
+		else if ( playerNumber == "2" )
+		{
+			m_startPosition = m_lastCheckpoint.GetChild( 1 );
 		}
 	}
 
@@ -197,13 +223,25 @@ public class CarController : MonoBehaviour {
 		return m_lastCheckpointId;
 	}
 
-	public bool isDead()
-	{
-		return m_dead;
-	}
-
 	public bool isActive()
 	{
 		return !m_dead && !m_freeze && !m_falling;
+	}
+
+	public bool isDead
+	{
+		get{ return m_dead; }
+		set{ m_dead = value; this.freeze(); }
+	}
+
+	public int lap
+	{
+		get { return m_lap; }
+		set { m_lap = value; }
+	}
+
+	public bool isFalling
+	{
+		get { return m_falling; }
 	}
 }

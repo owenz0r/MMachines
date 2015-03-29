@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class CameraController : MonoBehaviour {
 
 	bool m_tracking = true;
-	Transform m_restartCheckpoint;
+	//Transform m_restartCheckpoint;
 
 	public float minZoom = 0.5f;
 	public float maxZoom = 5.0f;
@@ -29,52 +29,30 @@ public class CameraController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		// check for player going out of view
-		foreach( Transform player in players )
-		{
-			// only check cars that are not falling already
-			if( player.GetComponent<CarController>().isActive() )
-			{
-				if( IsOutOfBounds( player.position ) )
-				{
-					Transform front = players[0];
-					int max = front.GetComponent<CarController>().lastCheckpointId();
-					Transform back = players[0];
-					int min = back.GetComponent<CarController>().lastCheckpointId();
-					for( int i=1; i < players.Length; i++ )
-					{
-						if( players[i].GetComponent<CarController>().lastCheckpointId() > max )
-						{
-							front = players[i];
-							max = players[i].GetComponent<CarController>().lastCheckpointId();
-						}
-						if( players[i].GetComponent<CarController>().lastCheckpointId() < min )
-						{
-							back = players[i];
-							min = players[i].GetComponent<CarController>().lastCheckpointId();
-						}
-					}
+		// keep track of leader each frame
+		Transform leader = checkpointManager.getLeader();
 
-					m_restartCheckpoint = front.GetComponent<CarController>().lastCheckpoint();
-					foreach( Transform p in players )
-					{
-						// should probably explode here
-						if( p != front )
-							p.GetComponent<CarController>().freeze();
-					}
-					if( m_tracking == true )
-					{
-						StartCoroutine( CenterOn( front.position, 1.0f, callback: resumeAfterScore ) );
-						front.GetComponent<CarController>().StartDance();
-					}
-					break;
+		// if we have a winner
+		if( carManager.numAlive() == 1 && m_tracking == true )
+		{
+			StartCoroutine( CenterOn( leader.position, 1.0f, callback: resumeAfterScore ) );
+			leader.GetComponent<CarController>().StartDance();
+		} else {
+			// move camer
+			transform.Translate( averagePosition() * -1.0f );
+			// check for player going out of view
+			foreach( Transform player in players )
+			{
+				// only check cars that are not falling already
+				if( player.GetComponent<CarController>().isActive() )
+				{
+					if( IsOutOfBounds( player.position ) && player != leader )
+						player.GetComponent<CarController>().isDead = true;
+
 				}
 			}
-		}
 
-		// move camera
-		if( m_tracking )
-			transform.Translate( averagePosition() * -1.0f );
+		}
 	}
 
 	Vector3 averagePosition()
@@ -83,7 +61,7 @@ public class CameraController : MonoBehaviour {
 		Vector3 averagePosition = Vector3.zero;
 		for( int i=0; i < players.Length; i++ )
 		{
-			if( !players[i].GetComponent<CarController>().isDead() )
+			if( !players[i].GetComponent<CarController>().isDead )
 			{
 				averagePosition += players[i].position;
 				live_players++;
@@ -96,7 +74,7 @@ public class CameraController : MonoBehaviour {
 
 	void resumeAfterScore()
 	{
-		carManager.updateAllCheckpoints( m_restartCheckpoint, carManager.getWinner().GetComponent<CarController>().lastCheckpointId() );
+		carManager.matchAllCheckpoints( carManager.getWinner().GetComponent<CarController>() );
 		carManager.resetAll();
 		carManager.freezeAll();
 		StartCoroutine( CenterOn( averagePosition(), 1.0f, wait: 0.0f, callback: startCountdown ) );
@@ -108,8 +86,6 @@ public class CameraController : MonoBehaviour {
 		if( carManager.numAlive() == 1 )
 		{
 			// celebrate
-			if( m_restartCheckpoint == null )
-				m_restartCheckpoint = carManager.getWinner().GetComponent<CarController>().lastCheckpoint();
 			StartCoroutine( CenterOn( averagePosition(), 1.0f, callback: resumeAfterScore ) );
 			carManager.getWinner().GetComponent<CarController>().StartDance();
 		} else {

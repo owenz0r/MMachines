@@ -17,10 +17,16 @@ public class CarManager : MonoBehaviour {
 			car.GetComponent<CarController>().freeze();
 	}
 
-	public void updateAllCheckpoints( Transform checkpoint, int id )
+	public void matchAllCheckpoints( CarController controller )
 	{
 		foreach( Transform car in carArray )
-			car.GetComponent<CarController>().setCheckpoint( checkpoint, id );
+			car.GetComponent<CarController>().matchCheckpoint( controller );
+	}
+
+	public void updateAllCheckpoints( Transform checkpoint )
+	{
+		foreach( Transform car in carArray )
+			car.GetComponent<CarController>().setCheckpoint( checkpoint );
 	}
 
 	public int numAlive()
@@ -28,7 +34,7 @@ public class CarManager : MonoBehaviour {
 		int count = 0;
 		foreach( Transform car in carArray )
 		{
-			if( !car.GetComponent<CarController>().isDead() )
+			if( !car.GetComponent<CarController>().isDead )
 				count++;
 		}
 		return count;
@@ -38,9 +44,21 @@ public class CarManager : MonoBehaviour {
 	{
 		foreach( Transform car in carArray )
 		{
-			if( !car.GetComponent<CarController>().isDead() )
+			if( !car.GetComponent<CarController>().isDead )
 				return car;
 		}
 		return null;
+	}
+
+	public Transform[] getAlive()
+	{
+		Transform[] livePlayers = new Transform[ numAlive() ];
+		int count = 0;
+		foreach( Transform car in carArray )
+		{
+			if( !car.GetComponent<CarController>().isDead )
+				livePlayers[ count++ ] = car;
+		}
+		return livePlayers;
 	}
 }
