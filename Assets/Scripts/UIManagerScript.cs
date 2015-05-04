@@ -4,58 +4,88 @@ using System.Collections;
 public class UIManagerScript : MonoBehaviour {
 
 	public Animator p1Text;
+	public Animator p2Text;
+	public Animator p3Text;
+	public Animator p4Text;
 
-	void Update()
-	{
-		if( Input.GetButtonDown( "Start" ) )
-			p1Text.enabled = true;
-	}
-
-	/*
-	public Animator startButton;
-	public Animator settingsButton;
-	public Animator dialog;
-	public Animator contentPanel;
-	public Animator gearImage;
+	private int nextPlayer = 1;
+	private bool[] inputJoined = { false, false, false, false };
+	//private string[] inputMap = {"","","","",""}; // 5 so we don't have to +1 all the time
 
 	void Start()
 	{
-		RectTransform transform = contentPanel.gameObject.transform as RectTransform;
-		Vector2 position = transform.anchoredPosition;
-		position.y -= transform.rect.height;
-		transform.anchoredPosition = position;
+		PlayerPrefs.DeleteAll();
 	}
 
-	public void ToggleMenu()
+	void Update()
 	{
-		contentPanel.enabled = true;
-
-		bool isHidden = contentPanel.GetBool( "isHidden" );
-		contentPanel.SetBool( "isHidden", !isHidden );
-
-		gearImage.enabled = true;
-		gearImage.SetBool( "isHidden", !isHidden );
+		if( Input.GetButtonDown( "Start_1" ) ){
+			if( !inputJoined[1] )
+			{
+				addPlayer( "1" );
+			} else if( nextPlayer > 2 ) {
+				StartGame();
+			}
+		} else if ( Input.GetButtonDown( "Start_2" ) ) {
+			if( !inputJoined[2] )
+			{
+				addPlayer( "2" );
+			} else if( nextPlayer > 2 ) {
+				StartGame();
+			}
+		} else if ( Input.GetButtonDown( "Start_3" ) ) {
+			if( !inputJoined[3] )
+			{
+				addPlayer( "3" );
+			} else if( nextPlayer > 2 ) {
+				StartGame();
+			}
+		} else if ( Input.GetButtonDown( "Start_4" ) ) {
+			if( !inputJoined[4] )
+			{
+				addPlayer( "4" );
+			} else if( nextPlayer > 2 ) {
+				StartGame();
+			}
+		}
 	}
 
-	public void OpenSettings()
+	void addPlayer( string input_number )
 	{
-		startButton.SetBool( "isHidden", true );
-		settingsButton.SetBool ( "isHidden", true );
-
-		dialog.enabled = true;
-		dialog.SetBool( "isHidden", false );
-	}
-
-	public void CloseSettings()
-	{
-		startButton.SetBool( "isHidden", false );
-		settingsButton.SetBool( "isHidden", false );
-		dialog.SetBool( "isHidden", true );
+		print( "Adding " + input_number + " as " + nextPlayer );
+		switch( nextPlayer )
+		{
+			case 1: 
+				p1Text.enabled = true;
+				//inputMap[1] = input_number;
+				PlayerPrefs.SetString( "Player1", input_number );
+				break;
+			case 2: 
+				p2Text.enabled = true;
+				//inputMap[2] = input_number;
+				PlayerPrefs.SetString( "Player2", input_number );
+				break;
+			case 3: 
+				p3Text.enabled = true;
+				//inputMap[3] = input_number;
+				PlayerPrefs.SetString( "Player3", input_number );
+				break;
+			case 4: 
+				p4Text.enabled = true;
+				//inputMap[4] = input_number;
+				PlayerPrefs.SetString( "Player4", input_number );
+				break;
+			default:
+				print( "Error on player number - " + nextPlayer );
+				break;
+		}
+		inputJoined[ int.Parse( input_number ) ] = true;
+		nextPlayer++;
 	}
 
 	public void StartGame()
 	{
+		PlayerPrefs.SetInt( "NumPlayers", nextPlayer - 1 );
 		Application.LoadLevel("main");
 	}
-	*/
 }

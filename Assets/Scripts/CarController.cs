@@ -5,6 +5,7 @@ using System;
 public class CarController : MonoBehaviour {
 
 	public string playerNumber = "1";
+	public string inputNumber = "1";
 	public float maxThrust = 15.0f;
 	public float maxReverse = 5.0f;
 	public float maxTorque = 5.0f;
@@ -103,9 +104,9 @@ public class CarController : MonoBehaviour {
 
 	void processKeyboardInput()
 	{
-		m_steering = Input.GetAxis( "Horizontal_" + playerNumber );
-		m_accel = Input.GetAxis( "Vertical_" + playerNumber );
-		m_reverse = Input.GetAxis( "Brake_" + playerNumber );
+		m_steering = Input.GetAxis( "Horizontal_" + inputNumber );
+		m_accel = Input.GetAxis( "Vertical_" + inputNumber );
+		m_reverse = Input.GetAxis( "Brake_" + inputNumber );
 	}
 	
 	IEnumerator Dance( Action callback = null )
@@ -186,7 +187,6 @@ public class CarController : MonoBehaviour {
 	{
 		m_lastCheckpoint = checkpoint;
 		m_lastCheckpointId = checkpoint.GetComponent<CheckpointController>().id;
-		print ( m_lastCheckpointId );
 		if( playerNumber == "1" )
 		{
 			m_startPosition = checkpoint.GetChild( 0 );
@@ -194,6 +194,14 @@ public class CarController : MonoBehaviour {
 		else if ( playerNumber == "2" )
 		{
 			m_startPosition = checkpoint.GetChild( 1 );
+		}
+		else if ( playerNumber == "3" )
+		{
+			m_startPosition = checkpoint.GetChild( 2 );
+		}
+		else if ( playerNumber == "4" )
+		{
+			m_startPosition = checkpoint.GetChild( 3 );
 		}
 	}
 	
@@ -210,6 +218,14 @@ public class CarController : MonoBehaviour {
 		else if ( playerNumber == "2" )
 		{
 			m_startPosition = m_lastCheckpoint.GetChild( 1 );
+		}
+		else if ( playerNumber == "3" )
+		{
+			m_startPosition = m_lastCheckpoint.GetChild( 2 );
+		}
+		else if ( playerNumber == "4" )
+		{
+			m_startPosition = m_lastCheckpoint.GetChild( 3 );
 		}
 	}
 

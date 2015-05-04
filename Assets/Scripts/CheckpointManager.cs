@@ -7,7 +7,7 @@ public class CheckpointManager : MonoBehaviour {
 
 	Transform m_startCheckpoint;
 	int m_totalCheckpoints;
-	int m_startId = 22;
+	int m_startId = 0;
 	int m_endId;
 
 	public void processCheckpoints()

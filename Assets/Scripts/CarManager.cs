@@ -5,6 +5,26 @@ public class CarManager : MonoBehaviour {
 
 	public Transform[] carArray;
 
+	public void Awake()
+	{
+		/*
+		int numPlayers = PlayerPrefs.GetInt( "NumPlayers" );
+		for( int i=0; i < numPlayers; i++ )
+		{
+			carArray[i].GetComponent<CarController>().inputNumber = PlayerPrefs.GetString( "Player" + (i+1) );
+		}
+		*/
+		for( int i=0; i < 4; i++ )
+		{
+			if( PlayerPrefs.HasKey( "Player" + (i+1) ) )
+			{
+				carArray[i].GetComponent<CarController>().inputNumber = PlayerPrefs.GetString( "Player" + (i+1) );
+			} else {
+				carArray[i].gameObject.SetActive( false );
+			}
+		}
+	}
+
 	public void resetAll()
 	{
 		foreach( Transform car in carArray )
