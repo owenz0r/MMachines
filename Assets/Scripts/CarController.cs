@@ -241,12 +241,19 @@ public class CarController : MonoBehaviour {
 
 	public bool isActive()
 	{
-		return !m_dead && !m_freeze && !m_falling;
+		return !m_dead && !m_freeze && !m_falling && gameObject.activeSelf;
 	}
 
 	public bool isDead
 	{
-		get{ return m_dead; }
+		get{ 
+			if( gameObject.activeSelf == true )
+			{
+				return m_dead;
+			} else {
+				return true;
+			}
+		}
 		set{ m_dead = value; this.freeze(); }
 	}
 

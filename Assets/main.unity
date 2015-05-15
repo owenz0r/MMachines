@@ -2789,6 +2789,8 @@ MonoBehaviour:
   players:
   - {fileID: 1353694462}
   - {fileID: 118813371}
+  - {fileID: 1448514143}
+  - {fileID: 375045300}
   ui: {fileID: 1526425618}
   xEdgeMin: .0199999996
   xEdgeMax: .980000019

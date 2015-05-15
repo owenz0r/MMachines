@@ -9,7 +9,7 @@ public class UIManagerScript : MonoBehaviour {
 	public Animator p4Text;
 
 	private int nextPlayer = 1;
-	private bool[] inputJoined = { false, false, false, false };
+	private bool[] inputJoined = { false, false, false, false, false }; // 5 so we don't have to +1 all the time
 	//private string[] inputMap = {"","","","",""}; // 5 so we don't have to +1 all the time
 
 	void Start()

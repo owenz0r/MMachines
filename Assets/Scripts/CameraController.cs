@@ -38,8 +38,9 @@ public class CameraController : MonoBehaviour {
 			StartCoroutine( CenterOn( leader.position, 1.0f, callback: resumeAfterScore ) );
 			leader.GetComponent<CarController>().StartDance();
 		} else {
-			// move camer
-			transform.Translate( averagePosition() * -1.0f );
+			// move camera
+			if( m_tracking )
+				transform.Translate( averagePosition() * -1.0f );
 			// check for player going out of view
 			foreach( Transform player in players )
 			{
@@ -47,8 +48,10 @@ public class CameraController : MonoBehaviour {
 				if( player.GetComponent<CarController>().isActive() )
 				{
 					if( IsOutOfBounds( player.position ) && player != leader )
+					{
 						player.GetComponent<CarController>().isDead = true;
-
+						StartCoroutine( ReLock( 1.0f ) );
+					}
 				}
 			}
 
@@ -139,6 +142,21 @@ public class CameraController : MonoBehaviour {
 		yield return new WaitForSeconds( wait );
 		if( callback != null )
 			callback();
+	}
+
+	IEnumerator ReLock( float seconds  )
+	{
+		m_tracking = false;
+		float totalTime = 0.0f;
+		while( totalTime < seconds )
+		{
+			Vector3 dist = averagePosition() * -1.0f;
+			float step = totalTime / seconds;
+			transform.position = transform.position + ( dist * step );
+			yield return null;
+			totalTime += Time.deltaTime;
+		}
+		m_tracking = true;
 	}
 
 	public void startCountdown()
