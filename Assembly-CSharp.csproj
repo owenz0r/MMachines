@@ -53,8 +53,15 @@
      <Compile Include="Assets\Scripts\CheckpointManager.cs" />
      <Compile Include="Assets\Scripts\CourseController.cs" />
      <Compile Include="Assets\Scripts\UIManagerScript.cs" />
+     <Compile Include="Assets\Scripts\XboxCtrlrInput.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>Z:/Program Files/Unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="XInputDotNetPure">
+ <HintPath>C:/Users/Owen/Documents/micromachines/Assets/Plugins/x86/XInputDotNetPure.dll</HintPath>
+ </Reference>
+ <Reference Include="XInputDotNetPure">
+ <HintPath>C:/Users/Owen/Documents/micromachines/Assets/Plugins/x86_64/XInputDotNetPure.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

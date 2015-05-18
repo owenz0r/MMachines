@@ -55,7 +55,7 @@ public class CheckpointManager : MonoBehaviour {
 
 	public Transform getLeader()
 	{
-		Transform leader = null;
+		Transform leader = carManager.getAlive()[0];
 		int highest = 0;
 		foreach( Transform car in carManager.getAlive() )
 		{

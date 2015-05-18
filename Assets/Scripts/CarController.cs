@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using XboxCtrlrInput;
 
 public class CarController : MonoBehaviour {
 
 	public string playerNumber = "1";
-	public string inputNumber = "1";
+	public int inputNumber = 1;
 	public float maxThrust = 15.0f;
 	public float maxReverse = 5.0f;
 	public float maxTorque = 5.0f;
@@ -104,9 +105,9 @@ public class CarController : MonoBehaviour {
 
 	void processKeyboardInput()
 	{
-		m_steering = Input.GetAxis( "Horizontal_" + inputNumber );
-		m_accel = Input.GetAxis( "Vertical_" + inputNumber );
-		m_reverse = Input.GetAxis( "Brake_" + inputNumber );
+		m_steering = XCI.GetAxis( XboxAxis.LeftStickX, inputNumber ) * -1.0f;
+		m_accel = XCI.GetAxis( XboxAxis.RightTrigger, inputNumber );
+		m_reverse = XCI.GetAxis( XboxAxis.LeftTrigger, inputNumber );
 	}
 	
 	IEnumerator Dance( Action callback = null )

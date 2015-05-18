@@ -11,7 +11,7 @@ public class CarManager : MonoBehaviour {
 		{
 			if( PlayerPrefs.HasKey( "Player" + (i+1) ) )
 			{
-				carArray[i].GetComponent<CarController>().inputNumber = PlayerPrefs.GetString( "Player" + (i+1) );
+				carArray[i].GetComponent<CarController>().inputNumber = (i+1);
 			} else {
 				carArray[i].GetComponent<CarController>().isDead = true;
 				carArray[i].gameObject.SetActive( false );

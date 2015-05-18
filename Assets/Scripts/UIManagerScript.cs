@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using XboxCtrlrInput;
 
 public class UIManagerScript : MonoBehaviour {
 
@@ -15,32 +16,33 @@ public class UIManagerScript : MonoBehaviour {
 	void Start()
 	{
 		PlayerPrefs.DeleteAll();
+		print ( XCI.GetNumPluggedCtrlrs() );
 	}
 
 	void Update()
 	{
-		if( Input.GetButtonDown( "Start_1" ) ){
+		if( XCI.GetButtonDown( XboxButton.Start, 1 ) ){
 			if( !inputJoined[1] )
 			{
 				addPlayer( "1" );
 			} else if( nextPlayer > 2 ) {
 				StartGame();
 			}
-		} else if ( Input.GetButtonDown( "Start_2" ) ) {
+		} else if ( XCI.GetButtonDown( XboxButton.Start, 2 ) ) {
 			if( !inputJoined[2] )
 			{
 				addPlayer( "2" );
 			} else if( nextPlayer > 2 ) {
 				StartGame();
 			}
-		} else if ( Input.GetButtonDown( "Start_3" ) ) {
+		} else if ( XCI.GetButtonDown( XboxButton.Start, 3 ) ) {
 			if( !inputJoined[3] )
 			{
 				addPlayer( "3" );
 			} else if( nextPlayer > 2 ) {
 				StartGame();
 			}
-		} else if ( Input.GetButtonDown( "Start_4" ) ) {
+		} else if ( XCI.GetButtonDown( XboxButton.Start, 4 ) ) {
 			if( !inputJoined[4] )
 			{
 				addPlayer( "4" );

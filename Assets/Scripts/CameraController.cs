@@ -71,6 +71,11 @@ public class CameraController : MonoBehaviour {
 			}
 		}
 		averagePosition /= live_players;
+
+		Transform leader = checkpointManager.getLeader();
+		averagePosition += leader.position * 2;
+		averagePosition /= 3;
+
 		averagePosition.z = 0.0f;
 		return averagePosition;
 	}
