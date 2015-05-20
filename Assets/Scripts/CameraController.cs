@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour {
 	public CarManager carManager;
 	public CheckpointManager checkpointManager;
 
-	void Start()
+	void Awake()
 	{
 		checkpointManager.processCheckpoints();
 		carManager.resetAll();

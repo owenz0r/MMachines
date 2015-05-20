@@ -4,20 +4,31 @@ using System.Collections;
 public class CheckpointController : MonoBehaviour {
 
 	public int id;
-	private CheckpointManager manager;
+
+	private CheckpointManager m_manager;
+	private Transform m_nextCheckpoint;
+	private Vector3 m_forward;
 
 	void Start()
 	{
-		manager = transform.parent.GetComponent<CheckpointManager>();
+		m_manager = transform.parent.GetComponent<CheckpointManager>();
+		m_nextCheckpoint = m_manager.getNextCheckpoint( id );
+		m_forward = m_nextCheckpoint.position - transform.position;
+		m_forward.Normalize();
 	}
 
 	void OnTriggerEnter2D( Collider2D other )
 	{
-		manager.checkPointTriggered( transform, other );
+		m_manager.checkPointTriggered( transform, other );
 	}
 
 	void OnDrawGizmos()
 	{
 		Gizmos.DrawCube( GetComponent<Collider2D>().bounds.center, GetComponent<Collider2D>().bounds.size );
+	}
+
+	public Vector3 forward
+	{
+		get { return m_forward; }
 	}
 }
