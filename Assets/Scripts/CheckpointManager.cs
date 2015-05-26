@@ -91,6 +91,7 @@ public class CheckpointManager : MonoBehaviour {
 				highest = lapId;
 		}
 
+		// count number of cars past latest checkpoint
 		List<int> leaders = new List<int>();
 		for( int i=0; i < alive.Length; i++ )
 		{
@@ -98,13 +99,17 @@ public class CheckpointManager : MonoBehaviour {
 				leaders.Add( i );
 		}
 
+		// we have a single definite leader
 		if( leaders.Count == 1 )
 		{
 			return alive[ leaders[0] ];
+		// need to check who has travelled furthest after the checkpoint
 		} else {
 			int checkpointId = alive[ leaders[0] ].GetComponent<CarController>().lastCheckpointId();
 			Transform checkpoint = getCheckpointById( checkpointId );
 			CheckpointController cpc = checkpoint.GetComponent<CheckpointController>();
+
+			// get distances along forward vector
 			float[] dist = new float[ leaders.Count ];
 			for( int i=0; i < leaders.Count; i++ )
 			{
@@ -114,6 +119,7 @@ public class CheckpointManager : MonoBehaviour {
 				dist[i] = mag;
 			}
 
+			// furthest distance is the leader
 			int first = 0;
 			for( int i=1; i < leaders.Count; i++ )
 			{

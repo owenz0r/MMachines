@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class CameraController : MonoBehaviour {
 
 	bool m_tracking = true;
+	GameObject m_leader;
+	IEnumerator m_relockRoutine;
 	//Transform m_restartCheckpoint;
 
 	public float minZoom = 0.5f;
@@ -26,11 +28,23 @@ public class CameraController : MonoBehaviour {
 		StartCoroutine( Countdown () );
 	}
 
+	void Start()
+	{
+		m_leader = checkpointManager.getLeader().gameObject;
+	}
+
 	// Update is called once per frame
 	void Update () {
 
 		// keep track of leader each frame
 		Transform leader = checkpointManager.getLeader();
+		if( leader.gameObject != m_leader )
+		{
+			m_leader = leader.gameObject;
+			StopCoroutine( m_relockRoutine );
+			m_relockRoutine = ReLock( 1.0f );
+			StartCoroutine( m_relockRoutine );
+		}
 
 		// if we have a winner
 		if( carManager.numAlive() == 1 && m_tracking == true )
@@ -50,7 +64,8 @@ public class CameraController : MonoBehaviour {
 					if( IsOutOfBounds( player.position ) && player != leader )
 					{
 						player.GetComponent<CarController>().isDead = true;
-						StartCoroutine( ReLock( 1.0f ) );
+						m_relockRoutine = ReLock( 1.0f );
+						StartCoroutine( m_relockRoutine );
 					}
 				}
 			}

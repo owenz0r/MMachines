@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using XboxCtrlrInput;
+using UnityEngine.UI;
 
 public class CarController : MonoBehaviour {
 
@@ -15,6 +16,7 @@ public class CarController : MonoBehaviour {
 	public CarManager carManager;
 	public CameraController camController;
 	public CheckpointManager checkpointManager;
+	public Text uiScore;
 	
 	float m_accel;
 	float m_reverse;
@@ -128,6 +130,7 @@ public class CarController : MonoBehaviour {
 	
 	public void StartDance( Action callback = null )
 	{
+		uiScore.text = (int.Parse( uiScore.text ) + 1).ToString();
 		if( m_falling )
 			StopFalling();
 		if( !m_falling && !m_dancing && !m_freeze )
