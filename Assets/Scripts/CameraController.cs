@@ -8,7 +8,8 @@ public class CameraController : MonoBehaviour {
 	bool m_tracking = true;
 	GameObject m_leader;
 	IEnumerator m_relockRoutine;
-	//Transform m_restartCheckpoint;
+	IEnumerator m_countdownRoutine;
+	IEnumerator m_centerOnRoutine;
 
 	public float minZoom = 0.5f;
 	public float maxZoom = 5.0f;
@@ -41,15 +42,13 @@ public class CameraController : MonoBehaviour {
 		if( leader.gameObject != m_leader )
 		{
 			m_leader = leader.gameObject;
-			StopCoroutine( m_relockRoutine );
-			m_relockRoutine = ReLock( 1.0f );
-			StartCoroutine( m_relockRoutine );
+			startRelock( 1.0f );
 		}
 
 		// if we have a winner
 		if( carManager.numAlive() == 1 && m_tracking == true )
 		{
-			StartCoroutine( CenterOn( leader.position, 1.0f, callback: resumeAfterScore ) );
+			startCenterOn( leader.position, 1.0f, callback: resumeAfterScore );
 			leader.GetComponent<CarController>().StartDance();
 		} else {
 			// move camera
@@ -100,7 +99,9 @@ public class CameraController : MonoBehaviour {
 		carManager.matchAllCheckpoints( carManager.getWinner().GetComponent<CarController>() );
 		carManager.resetAll();
 		carManager.freezeAll();
-		StartCoroutine( CenterOn( averagePosition(), 1.0f, wait: 0.0f, callback: startCountdown ) );
+		m_leader = checkpointManager.getLeader().gameObject;
+		Transform checkpoint = m_leader.GetComponent<CarController>().lastCheckpoint();
+		startCenterOn( checkpoint.position, 1.0f, wait: 0.0f, callback: startCountdown );
 	}
 
 	public void resumeAfterFall()
@@ -109,11 +110,11 @@ public class CameraController : MonoBehaviour {
 		if( carManager.numAlive() == 1 )
 		{
 			// celebrate
-			StartCoroutine( CenterOn( averagePosition(), 1.0f, callback: resumeAfterScore ) );
+			startCenterOn( averagePosition(), 1.0f, callback: resumeAfterScore );
 			carManager.getWinner().GetComponent<CarController>().StartDance();
 		} else {
 			// continue with the race
-			StartCoroutine( CenterOn( averagePosition(), 0.2f, wait: 0.0f, callback: () => { m_tracking = true; } ) );
+			startCenterOn( averagePosition(), 0.2f, wait: 0.0f, callback: () => { m_tracking = true; } );
 		}
 	}
 
@@ -127,11 +128,12 @@ public class CameraController : MonoBehaviour {
 		return false;
 	}
 
+
 	IEnumerator Countdown()
 	{
+		m_tracking = false;
 		foreach( Transform player in players )
 			player.GetComponent<CarController>().freeze();
-		m_tracking = true;
 
 		Text text = ui.GetComponent<Text>();
 		for( int i = 3; i > 0; i-- )
@@ -144,6 +146,8 @@ public class CameraController : MonoBehaviour {
 			player.GetComponent<CarController>().unfreeze();
 		yield return new WaitForSeconds(1.0f);
 		text.text = "";
+
+		startRelock( 1.0f );
 	}
 	
 	IEnumerator CenterOn( Vector3 target, float seconds, float wait = 1.0f, Action callback = null )
@@ -181,7 +185,31 @@ public class CameraController : MonoBehaviour {
 
 	public void startCountdown()
 	{
-		StartCoroutine( Countdown() );
+		if( m_countdownRoutine != null )
+			StopCoroutine( m_countdownRoutine );
+		m_countdownRoutine = Countdown();
+		StartCoroutine( m_countdownRoutine );
 	}
+
+	void startRelock( float time )
+	{
+		if( m_relockRoutine != null )
+			StopCoroutine( m_relockRoutine );
+		if( m_centerOnRoutine != null )
+			StopCoroutine( m_centerOnRoutine );
+		m_relockRoutine = ReLock( time );
+		StartCoroutine( m_relockRoutine );
+	}
+
+	void startCenterOn( Vector3 target, float seconds, float wait = 1.0f, Action callback = null )
+	{
+		if( m_centerOnRoutine != null )
+			StopCoroutine( m_centerOnRoutine );
+		if( m_relockRoutine != null )
+			StopCoroutine( m_relockRoutine );
+		m_centerOnRoutine = CenterOn( target, seconds, wait, callback );
+		StartCoroutine( m_centerOnRoutine );
+	}
+
 
 }

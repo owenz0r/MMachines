@@ -130,11 +130,13 @@ public class CarController : MonoBehaviour {
 	
 	public void StartDance( Action callback = null )
 	{
-		uiScore.text = (int.Parse( uiScore.text ) + 1).ToString();
 		if( m_falling )
 			StopFalling();
 		if( !m_falling && !m_dancing && !m_freeze )
+		{
 			StartCoroutine( Dance ( callback ) );
+			uiScore.text = (int.Parse( uiScore.text ) + 1).ToString();
+		}
 	}
 
 	IEnumerator Fall( Action callback = null )
