@@ -102,6 +102,7 @@ public class CheckpointManager : MonoBehaviour {
 		// we have a single definite leader
 		if( leaders.Count == 1 )
 		{
+			m_leaderPos = alive[ leaders[0] ].position;
 			return alive[ leaders[0] ];
 		// need to check who has travelled furthest after the checkpoint
 		} else {

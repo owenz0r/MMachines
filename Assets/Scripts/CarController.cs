@@ -114,7 +114,7 @@ public class CarController : MonoBehaviour {
 	
 	IEnumerator Dance( Action callback = null )
 	{
-		print ( "DANCE" );
+//		print ( "DANCE" );
 		m_dancing = true;
 		GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 		GetComponent<Rigidbody2D>().AddTorque( 40.0f );
@@ -141,7 +141,7 @@ public class CarController : MonoBehaviour {
 
 	IEnumerator Fall( Action callback = null )
 	{
-		print( "FALL" );
+//		print( "FALL" );
 		m_falling = true;
 		GetComponent<Rigidbody2D>().AddTorque( 40.0f );
 		for( float f = 1.0f; f >= 0.0f; f -= 0.1f )
@@ -216,7 +216,7 @@ public class CarController : MonoBehaviour {
 		m_lastCheckpoint = other.lastCheckpoint();
 		m_lastCheckpointId = other.lastCheckpointId();
 		lap = other.lap;
-		print ( m_lastCheckpointId );
+//		print ( m_lastCheckpointId );
 		if( playerNumber == "1" )
 		{
 			m_startPosition = m_lastCheckpoint.GetChild( 0 );

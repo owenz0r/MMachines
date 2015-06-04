@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class CameraController : MonoBehaviour {
 
 	bool m_tracking = true;
-	GameObject m_leader;
+	bool m_racing = false;
+	GameObject m_leader = null;
 	IEnumerator m_relockRoutine;
 	IEnumerator m_countdownRoutine;
 	IEnumerator m_centerOnRoutine;
@@ -29,27 +30,29 @@ public class CameraController : MonoBehaviour {
 		StartCoroutine( Countdown () );
 	}
 
-	void Start()
-	{
-		m_leader = checkpointManager.getLeader().gameObject;
-	}
-
 	// Update is called once per frame
 	void Update () {
-
+		Transform leader = null;
 		// keep track of leader each frame
-		Transform leader = checkpointManager.getLeader();
-		if( leader.gameObject != m_leader )
+		if( m_racing )
 		{
-			m_leader = leader.gameObject;
-			startRelock( 1.0f );
+			leader = checkpointManager.getLeader();
+			if( leader.gameObject != m_leader )
+			{
+				m_leader = leader.gameObject;
+				print( "LEADER CHANGED" );
+				startRelock( 1.0f );
+			}
 		}
 
 		// if we have a winner
 		if( carManager.numAlive() == 1 && m_tracking == true )
 		{
+			print( "WINNER" );
 			startCenterOn( leader.position, 1.0f, callback: resumeAfterScore );
 			leader.GetComponent<CarController>().StartDance();
+			m_racing = false;
+			m_leader = null;
 		} else {
 			// move camera
 			if( m_tracking )
@@ -142,12 +145,14 @@ public class CameraController : MonoBehaviour {
 			yield return new WaitForSeconds(1.0f);
 		}
 		text.text = "GO!";
+		m_racing = true;
 		foreach( Transform player in players )
 			player.GetComponent<CarController>().unfreeze();
 		yield return new WaitForSeconds(1.0f);
 		text.text = "";
 
-		startRelock( 1.0f );
+//		print( "COUNTDOWN FINISHED" );
+//		startRelock( 1.0f );
 	}
 	
 	IEnumerator CenterOn( Vector3 target, float seconds, float wait = 1.0f, Action callback = null )
@@ -193,6 +198,7 @@ public class CameraController : MonoBehaviour {
 
 	void startRelock( float time )
 	{
+		print( "RELOCK" );
 		if( m_relockRoutine != null )
 			StopCoroutine( m_relockRoutine );
 		if( m_centerOnRoutine != null )
@@ -203,6 +209,7 @@ public class CameraController : MonoBehaviour {
 
 	void startCenterOn( Vector3 target, float seconds, float wait = 1.0f, Action callback = null )
 	{
+		print( "CENTER ON" );
 		if( m_centerOnRoutine != null )
 			StopCoroutine( m_centerOnRoutine );
 		if( m_relockRoutine != null )

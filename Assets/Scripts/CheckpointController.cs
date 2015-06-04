@@ -24,7 +24,9 @@ public class CheckpointController : MonoBehaviour {
 
 	void OnDrawGizmos()
 	{
-		Gizmos.DrawCube( GetComponent<Collider2D>().bounds.center, GetComponent<Collider2D>().bounds.size );
+		Gizmos.color = Color.red;
+		Gizmos.DrawWireCube( GetComponent<Collider2D>().bounds.center, GetComponent<Collider2D>().bounds.size );
+		Gizmos.DrawLine( transform.position, transform.position + m_forward );
 	}
 
 	public Vector3 forward
