@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using XboxCtrlrInput;
 using UnityEngine.UI;
+using UnityEditor;
 
 public class CarController : MonoBehaviour {
 
@@ -272,5 +273,24 @@ public class CarController : MonoBehaviour {
 	public bool isFalling
 	{
 		get { return m_falling; }
+	}
+
+	void OnDrawGizmos()
+	{
+		if( m_lastCheckpoint )
+		{
+			CheckpointController cpc = m_lastCheckpoint.GetComponent<CheckpointController>();
+			Vector3 dir = transform.position - m_lastCheckpoint.position;
+			float dot = Vector3.Dot( dir.normalized, cpc.forward );
+			Vector3 scale = Vector3.Scale( dir, cpc.forward );
+			float mag = dir.sqrMagnitude;
+			mag *= dot;
+			GUIStyle style = new GUIStyle();
+			style.normal.textColor = Color.green;
+			style.fontSize += 15;
+			Vector3 textPos = transform.position;
+			textPos.y = textPos.y - 0.1f;
+			Handles.Label( textPos, mag.ToString(), style );
+		}
 	}
 }

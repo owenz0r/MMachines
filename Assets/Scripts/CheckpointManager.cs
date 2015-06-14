@@ -115,9 +115,11 @@ public class CheckpointManager : MonoBehaviour {
 			for( int i=0; i < leaders.Count; i++ )
 			{
 				Transform car = alive[ leaders[i] ];
-				Vector3 dir = Vector3.Scale( (car.position - checkpoint.position), cpc.forward );
+				Vector3 dir = car.position - checkpoint.position;
+				float dot = Vector3.Dot ( dir.normalized, cpc.forward );
+				Vector3 scale = Vector3.Scale( dir, cpc.forward );
 				float mag = dir.sqrMagnitude;
-				dist[i] = mag;
+				dist[i] = mag * dot;
 			}
 
 			// furthest distance is the leader
