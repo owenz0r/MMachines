@@ -1,16 +1,21 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 public class CheckpointManager : MonoBehaviour {
 
 	public CarManager carManager;
+	public Text uiLap;
+	public Text uiFinishText;
 
 	Transform m_startCheckpoint;
 	int m_totalCheckpoints;
+	//int m_startId = 22;
 	int m_startId = 0;
 	int m_endId;
 	Vector3 m_leaderPos = Vector3.zero;
+
 
 	public Transform getNextCheckpoint( int id )
 	{
@@ -45,6 +50,23 @@ public class CheckpointManager : MonoBehaviour {
 		m_endId = transform.childCount - 1;
 	}
 
+	void finishRace()
+	{
+		carManager.freezeAll( stopMovement:false );
+		uiFinishText.GetComponent<Animator>().enabled = true;
+	}
+
+	public void nextLap( int lapNum )
+	{
+		print( "LAP!");
+		if( lapNum == 1 )
+		{
+			finishRace();
+		} else {
+			uiLap.text = ( lapNum + 1 ).ToString() + "/3";
+		}
+	}
+
 	public void checkPointTriggered( Transform checkpoint, Collider2D other )
 	{
 		CarController car = other.GetComponent<CarController>();
@@ -63,9 +85,18 @@ public class CheckpointManager : MonoBehaviour {
 		}
 
 		int lapId = ( car.lap * m_totalCheckpoints ) + id;
-
 		if( lapId == lastLapId + 1 || lapId == lastLapId - 1 )
 			car.setCheckpoint( checkpoint );
+
+		// if this is the leader
+		if( getLeader().gameObject == car.gameObject )
+		{
+			// and they're going forwards over the start/finish
+			if( lastId == m_endId && id == 0 )
+			{
+				nextLap( car.lap );
+			} 
+		}
 	}
 
 	public int getNextCheckpointId( int current )
@@ -114,12 +145,8 @@ public class CheckpointManager : MonoBehaviour {
 			float[] dist = new float[ leaders.Count ];
 			for( int i=0; i < leaders.Count; i++ )
 			{
-				Transform car = alive[ leaders[i] ];
-				Vector3 dir = car.position - checkpoint.position;
-				float dot = Vector3.Dot ( dir.normalized, cpc.forward );
-				Vector3 scale = Vector3.Scale( dir, cpc.forward );
-				float mag = dir.sqrMagnitude;
-				dist[i] = mag * dot;
+				CarController cc = alive[ leaders[i] ].GetComponent<CarController>();
+				dist[i] = cc.distanceFromCheckpoint();
 			}
 
 			// furthest distance is the leader

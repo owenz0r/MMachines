@@ -2,10 +2,10 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\CarController.cs">
     <Files>
-      <File FileName="Assets\Scripts\CarController.cs" Line="282" Column="85" />
-      <File FileName="Assets\Scripts\CheckpointManager.cs" Line="111" Column="79" />
       <File FileName="Assets\Scripts\CheckpointController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\CameraController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\CameraController.cs" Line="154" Column="1" />
+      <File FileName="Assets\Scripts\CheckpointManager.cs" Line="62" Column="18" />
+      <File FileName="Assets\Scripts\CarController.cs" Line="32" Column="15" />
       <File FileName="Assets\Scripts\UIManagerScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CarManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CourseController.cs" Line="1" Column="1" />

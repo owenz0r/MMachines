@@ -137,6 +137,7 @@ public class CameraController : MonoBehaviour {
 		m_tracking = false;
 		foreach( Transform player in players )
 			player.GetComponent<CarController>().freeze();
+		m_leader = null;
 
 		Text text = ui.GetComponent<Text>();
 		for( int i = 3; i > 0; i-- )
@@ -151,8 +152,6 @@ public class CameraController : MonoBehaviour {
 		yield return new WaitForSeconds(1.0f);
 		text.text = "";
 
-//		print( "COUNTDOWN FINISHED" );
-//		startRelock( 1.0f );
 	}
 	
 	IEnumerator CenterOn( Vector3 target, float seconds, float wait = 1.0f, Action callback = null )

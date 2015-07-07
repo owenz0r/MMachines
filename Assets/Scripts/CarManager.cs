@@ -25,10 +25,10 @@ public class CarManager : MonoBehaviour {
 			car.GetComponent<CarController>().Reset();
 	}
 
-	public void freezeAll()
+	public void freezeAll( bool stopMovement=true )
 	{
 		foreach( Transform car in carArray )
-			car.GetComponent<CarController>().freeze();
+			car.GetComponent<CarController>().freeze( stopMovement=stopMovement );
 	}
 
 	public void matchAllCheckpoints( CarController controller )

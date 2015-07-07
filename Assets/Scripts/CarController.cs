@@ -178,11 +178,14 @@ public class CarController : MonoBehaviour {
 		m_falling = false;
 	}
 
-	public void freeze()
+	public void freeze( bool stopMovement=true )
 	{
 		m_freeze = true;
-		GetComponent<Rigidbody2D>().velocity = Vector3.zero;
-		GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
+		if( stopMovement )
+		{
+			GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+			GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
+		}
 	}
 
 	public void unfreeze()
@@ -275,16 +278,20 @@ public class CarController : MonoBehaviour {
 		get { return m_falling; }
 	}
 
+	public float distanceFromCheckpoint()
+	{
+		CheckpointController cpc = m_lastCheckpoint.GetComponent<CheckpointController>();
+		Vector3 dir = transform.position - m_lastCheckpoint.position;
+		float dot = Vector3.Dot( dir.normalized, cpc.forward );
+		float mag = dir.sqrMagnitude;
+		return mag * dot;
+	}
+
 	void OnDrawGizmos()
 	{
 		if( m_lastCheckpoint )
 		{
-			CheckpointController cpc = m_lastCheckpoint.GetComponent<CheckpointController>();
-			Vector3 dir = transform.position - m_lastCheckpoint.position;
-			float dot = Vector3.Dot( dir.normalized, cpc.forward );
-			Vector3 scale = Vector3.Scale( dir, cpc.forward );
-			float mag = dir.sqrMagnitude;
-			mag *= dot;
+			float mag = distanceFromCheckpoint();
 			GUIStyle style = new GUIStyle();
 			style.normal.textColor = Color.green;
 			style.fontSize += 15;
