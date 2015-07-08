@@ -66,8 +66,7 @@ public class CameraController : MonoBehaviour {
 					if( IsOutOfBounds( player.position ) && player != leader )
 					{
 						player.GetComponent<CarController>().isDead = true;
-						m_relockRoutine = ReLock( 1.0f );
-						StartCoroutine( m_relockRoutine );
+						startRelock( 1.0f );
 					}
 				}
 			}
@@ -90,8 +89,8 @@ public class CameraController : MonoBehaviour {
 		averagePosition /= live_players;
 
 		Transform leader = checkpointManager.getLeader();
-		averagePosition += leader.position * 2;
-		averagePosition /= 3;
+		averagePosition += leader.position * live_players;
+		averagePosition /= live_players + 1;
 
 		averagePosition.z = 0.0f;
 		return averagePosition;
