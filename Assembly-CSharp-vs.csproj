@@ -52,6 +52,9 @@
      <Compile Include="Assets\Scripts\CheckpointController.cs" />
      <Compile Include="Assets\Scripts\CheckpointManager.cs" />
      <Compile Include="Assets\Scripts\CourseController.cs" />
+     <Compile Include="Assets\Scripts\SkidController.cs" />
+     <Compile Include="Assets\Scripts\TrailGenerator.cs" />
+     <Compile Include="Assets\Scripts\TrailManager.cs" />
      <Compile Include="Assets\Scripts\UIManagerScript.cs" />
      <Compile Include="Assets\Scripts\XboxCtrlrInput.cs" />
  <Reference Include="UnityEngine.UI">

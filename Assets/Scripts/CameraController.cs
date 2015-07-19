@@ -56,7 +56,12 @@ public class CameraController : MonoBehaviour {
 		} else {
 			// move camera
 			if( m_tracking )
-				transform.Translate( averagePosition() * -1.0f );
+			{
+				//transform.Translate( averagePosition() * -1.0f );
+				Vector3 dist = averagePosition() - transform.position;
+				dist.z = 0.0f;
+				transform.Translate( dist );
+			}
 			// check for player going out of view
 			foreach( Transform player in players )
 			{
@@ -156,7 +161,9 @@ public class CameraController : MonoBehaviour {
 	IEnumerator CenterOn( Vector3 target, float seconds, float wait = 1.0f, Action callback = null )
 	{
 		m_tracking = false;
-		Vector3 dist = new Vector3( target.x, target.y, 0.0f ) * -1.0f;
+		//Vector3 dist = new Vector3( target.x, target.y, 0.0f ) * -1.0f;
+		Vector3 dist = target - transform.position;
+		dist.z = 0.0f;
 		Vector3 startPos = transform.position;
 		float totalTime = 0.0f;
 		while( totalTime < seconds )
@@ -177,7 +184,9 @@ public class CameraController : MonoBehaviour {
 		float totalTime = 0.0f;
 		while( totalTime < seconds )
 		{
-			Vector3 dist = averagePosition() * -1.0f;
+			//Vector3 dist = averagePosition() * -1.0f;
+			Vector3 dist = averagePosition() - transform.position;
+			dist.z = 0.0f;
 			float step = totalTime / seconds;
 			transform.position = transform.position + ( dist * step );
 			yield return null;
