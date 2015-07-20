@@ -7,14 +7,17 @@ public class TrailGenerator : MonoBehaviour {
 	public float minDistance = 1.0f;
 	public float width = 1.0f;
 	public MeshFilter trailMeshFilter = null;
+	public TrailManager trailManager = null;
 
 	List<Vector3> m_point_list = null;
 	bool m_generating = false;
 	Vector3 m_last_point;
+	MeshRenderer m_mesh_renderer;
 
 	// Use this for initialization
 	void Start () {
 		m_point_list = new List<Vector3>();
+		m_mesh_renderer = GetComponent<MeshRenderer>();
 	}
 	
 	// Update is called once per frame
@@ -24,10 +27,17 @@ public class TrailGenerator : MonoBehaviour {
 		{
 			addPoints();
 			if( Input.GetKeyDown( KeyCode.S ) )
+			{
 				m_generating = false;
+				trailManager.addTrail( m_point_list );
+				m_mesh_renderer.enabled = false;
+			}
 		} else {
 			if( Input.GetKeyDown( KeyCode.S ) )
+			{
 				m_generating = true;
+				m_point_list = new List<Vector3>();
+			}
 		}
 		generateMesh();
 	}
@@ -111,6 +121,7 @@ public class TrailGenerator : MonoBehaviour {
 			trail_mesh.RecalculateNormals();
 
 			trailMeshFilter.mesh = trail_mesh;
+			m_mesh_renderer.enabled = true;
 		}
 	}
 
