@@ -4555,6 +4555,10 @@ Prefab:
       propertyPath: uiScore
       value: 
       objectReference: {fileID: 1354274896}
+    - target: {fileID: 102176, guid: f1475ee42b6473345888d22db192de36, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f1475ee42b6473345888d22db192de36, type: 2}
   m_IsPrefabParent: 0
@@ -5266,6 +5270,10 @@ Prefab:
       propertyPath: uiScore
       value: 
       objectReference: {fileID: 1310134463}
+    - target: {fileID: 102176, guid: f1475ee42b6473345888d22db192de36, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f1475ee42b6473345888d22db192de36, type: 2}
   m_IsPrefabParent: 0

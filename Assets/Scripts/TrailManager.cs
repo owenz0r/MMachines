@@ -86,5 +86,6 @@ public class TrailManager : MonoBehaviour {
 	public void addTrail( List<Vector3> new_trail )
 	{
 		m_trails.Add ( new_trail );
+		generateMesh();
 	}
 }

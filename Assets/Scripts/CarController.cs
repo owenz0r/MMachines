@@ -31,11 +31,13 @@ public class CarController : MonoBehaviour {
 	Transform m_startPosition;
 	int m_lap = 0;
 	IEnumerator m_fallRoutine;
+	TrailGenerator m_trail_generator;
 
 	void Start()
 	{
 		m_freeze = true;
 		m_dead = false;
+		m_trail_generator = GetComponent<TrailGenerator>();
 	}
 
 	public void Reset()
@@ -111,6 +113,10 @@ public class CarController : MonoBehaviour {
 		m_steering = XCI.GetAxis( XboxAxis.LeftStickX, inputNumber ) * -1.0f;
 		m_accel = XCI.GetAxis( XboxAxis.RightTrigger, inputNumber );
 		m_reverse = XCI.GetAxis( XboxAxis.LeftTrigger, inputNumber );
+		if( Input.GetKeyDown( KeyCode.S ) )
+			m_trail_generator.startTrail();
+		if( Input.GetKeyDown( KeyCode.T ) )
+			m_trail_generator.stopTrail();
 	}
 	
 	IEnumerator Dance( Action callback = null )

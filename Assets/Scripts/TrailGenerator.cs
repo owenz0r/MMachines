@@ -26,20 +26,8 @@ public class TrailGenerator : MonoBehaviour {
 		if( m_generating == true )
 		{
 			addPoints();
-			if( Input.GetKeyDown( KeyCode.S ) )
-			{
-				m_generating = false;
-				trailManager.addTrail( m_point_list );
-				m_mesh_renderer.enabled = false;
-			}
-		} else {
-			if( Input.GetKeyDown( KeyCode.S ) )
-			{
-				m_generating = true;
-				m_point_list = new List<Vector3>();
-			}
+			generateMesh();
 		}
-		generateMesh();
 	}
 
 	void addPoints()
@@ -121,8 +109,22 @@ public class TrailGenerator : MonoBehaviour {
 			trail_mesh.RecalculateNormals();
 
 			trailMeshFilter.mesh = trail_mesh;
-			m_mesh_renderer.enabled = true;
 		}
+	}
+
+	public void startTrail()
+	{
+		m_generating = true;
+		m_point_list = new List<Vector3>();
+		m_mesh_renderer.enabled = true;
+	}
+
+	public void stopTrail()
+	{
+		m_generating = false;
+		trailManager.addTrail( m_point_list );
+		trailMeshFilter.mesh = new Mesh();
+		m_mesh_renderer.enabled = false;
 	}
 
 	void OnDrawGizmos()
