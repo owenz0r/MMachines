@@ -114,17 +114,23 @@ public class TrailGenerator : MonoBehaviour {
 
 	public void startTrail()
 	{
-		m_generating = true;
-		m_point_list = new List<Vector3>();
-		m_mesh_renderer.enabled = true;
+		if( m_generating == false )
+		{
+			m_generating = true;
+			m_point_list = new List<Vector3>();
+			m_mesh_renderer.enabled = true;
+		}
 	}
 
 	public void stopTrail()
 	{
-		m_generating = false;
-		trailManager.addTrail( m_point_list );
-		trailMeshFilter.mesh = new Mesh();
-		m_mesh_renderer.enabled = false;
+		if( m_generating )
+		{
+			m_generating = false;
+			trailManager.addTrail( m_point_list );
+			trailMeshFilter.mesh = new Mesh();
+			m_mesh_renderer.enabled = false;
+		}
 	}
 
 	void OnDrawGizmos()

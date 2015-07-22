@@ -46,7 +46,7 @@ public class CameraController : MonoBehaviour {
 		}
 
 		// if we have a winner
-		if( carManager.numAlive() == 1 && m_tracking == true )
+		if( carManager.numAlive() == 6 && m_tracking == true )
 		{
 			print( "WINNER" );
 			startCenterOn( leader.position, 1.0f, callback: resumeAfterScore );

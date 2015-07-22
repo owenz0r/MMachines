@@ -13,6 +13,10 @@ public class CarController : MonoBehaviour {
 	public float maxReverse = 5.0f;
 	public float maxTorque = 5.0f;
 	public float maxTraction = 5.0f;
+	public float minEnginePitch = 0.5f;
+	public float maxEnginePitch = 2.0f;
+	public AudioSource engineSound = null;
+	public AudioSource tyreSqueal = null;
 
 	public CarManager carManager;
 	public CameraController camController;
@@ -31,24 +35,32 @@ public class CarController : MonoBehaviour {
 	Transform m_startPosition;
 	int m_lap = 0;
 	IEnumerator m_fallRoutine;
-	TrailGenerator m_trail_generator;
+	TrailGenerator m_trail_generator = null;
+	Rigidbody2D m_rigidbody = null;
+
+	void Awake()
+	{
+		m_trail_generator = GetComponent<TrailGenerator>();
+		m_rigidbody = GetComponent<Rigidbody2D>();
+	}
 
 	void Start()
 	{
 		m_freeze = true;
 		m_dead = false;
-		m_trail_generator = GetComponent<TrailGenerator>();
 	}
 
 	public void Reset()
 	{
+		if( m_rigidbody == null )
+			m_rigidbody = GetComponent<Rigidbody2D>();
 		StopCoroutine( "Fall" );
 		StopCoroutine( "Dance" );
 		transform.localScale = m_startPosition.localScale;
 		transform.position = m_startPosition.position;
 		transform.rotation = m_startPosition.rotation;
-		GetComponent<Rigidbody2D>().velocity = Vector3.zero;
-		GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
+		m_rigidbody.velocity = Vector3.zero;
+		m_rigidbody.angularVelocity = 0.0f;
 		m_falling = false;
 		m_dancing = false;
 		m_dead = false;
@@ -64,6 +76,8 @@ public class CarController : MonoBehaviour {
 		} else {
 			processKeyboardInput();
 		}
+		adjustEngineSound();
+		doTyreSqueal();
 	}
 
 	void FixedUpdate()
@@ -71,22 +85,22 @@ public class CarController : MonoBehaviour {
 		// acceleration
 		if( m_reverse > 0.0f )
 		{
-			GetComponent<Rigidbody2D>().AddRelativeForce( new Vector2( 0.0f, maxReverse * (m_reverse * -1.0f) ) );
+			m_rigidbody.AddRelativeForce( new Vector2( 0.0f, maxReverse * (m_reverse * -1.0f) ) );
 		} else {
-			GetComponent<Rigidbody2D>().AddRelativeForce( new Vector2( 0.0f, maxThrust * m_accel ) );
+			m_rigidbody.AddRelativeForce( new Vector2( 0.0f, maxThrust * m_accel ) );
 		}
 
 		// turning
 		Transform axel_transform = transform.GetChild( 1 );
 		axel_transform.localEulerAngles = new Vector3( 0.0f, 0.0f, 45.0f * m_steering );
 
-		Vector2 localVelocity = transform.InverseTransformDirection( GetComponent<Rigidbody2D>().velocity );
-		if( GetComponent<Rigidbody2D>().velocity.magnitude > 0.5f )
+		Vector2 localVelocity = transform.InverseTransformDirection( m_rigidbody.velocity );
+		if( m_rigidbody.velocity.magnitude > 0.5f )
 		{
 			// reverse steering if we're going backwards
 			if( localVelocity.y < 0.0f )
 				m_steering *= -1.0f;
-			GetComponent<Rigidbody2D>().AddTorque( maxTorque * m_steering );
+			m_rigidbody.AddTorque( maxTorque * m_steering );
 		}
 
 		// traction
@@ -103,7 +117,7 @@ public class CarController : MonoBehaviour {
 			if( traction.x < negMaxTraction )
 				traction.x = negMaxTraction;
 
-			GetComponent<Rigidbody2D>().AddRelativeForce( traction, ForceMode2D.Impulse );
+			m_rigidbody.AddRelativeForce( traction, ForceMode2D.Impulse );
 		}
 
 	}
@@ -113,18 +127,40 @@ public class CarController : MonoBehaviour {
 		m_steering = XCI.GetAxis( XboxAxis.LeftStickX, inputNumber ) * -1.0f;
 		m_accel = XCI.GetAxis( XboxAxis.RightTrigger, inputNumber );
 		m_reverse = XCI.GetAxis( XboxAxis.LeftTrigger, inputNumber );
-		if( Input.GetKeyDown( KeyCode.S ) )
-			m_trail_generator.startTrail();
-		if( Input.GetKeyDown( KeyCode.T ) )
-			m_trail_generator.stopTrail();
 	}
-	
+
+	void adjustEngineSound()
+	{
+		float speed = m_rigidbody.velocity.magnitude;
+		if( speed > 8.0f )
+			speed = 8.0f;
+		speed = speed / 8.0f;
+		speed *= ( maxEnginePitch - minEnginePitch );
+		engineSound.pitch = minEnginePitch + speed;
+	}
+
+	void doTyreSqueal()
+	{
+		float dot = Vector3.Dot( transform.up, m_rigidbody.velocity.normalized );
+		if( m_rigidbody.velocity.magnitude > 0.5f && dot < 0.9f && dot > -0.9f )
+		{
+			if( tyreSqueal.isPlaying == false )
+			{
+				tyreSqueal.Play();
+				m_trail_generator.startTrail();
+			}
+		} else {
+			tyreSqueal.Stop();
+			m_trail_generator.stopTrail();
+		}
+	}
+
 	IEnumerator Dance( Action callback = null )
 	{
 //		print ( "DANCE" );
 		m_dancing = true;
-		GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-		GetComponent<Rigidbody2D>().AddTorque( 40.0f );
+		m_rigidbody.velocity = Vector2.zero;
+		m_rigidbody.AddTorque( 40.0f );
 		for( float f = 1.0f; f >= 0.0f; f -= 0.1f )
 		{
 			yield return new WaitForSeconds(0.1f);
@@ -150,7 +186,7 @@ public class CarController : MonoBehaviour {
 	{
 //		print( "FALL" );
 		m_falling = true;
-		GetComponent<Rigidbody2D>().AddTorque( 40.0f );
+		m_rigidbody.AddTorque( 40.0f );
 		for( float f = 1.0f; f >= 0.0f; f -= 0.1f )
 		{
 			transform.localScale = new Vector3( f, f, f);
@@ -189,8 +225,8 @@ public class CarController : MonoBehaviour {
 		m_freeze = true;
 		if( stopMovement )
 		{
-			GetComponent<Rigidbody2D>().velocity = Vector3.zero;
-			GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
+			m_rigidbody.velocity = Vector3.zero;
+			m_rigidbody.angularVelocity = 0.0f;
 		}
 	}
 

@@ -15,7 +15,7 @@ public class TrailManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		generateMesh();
+		//generateMesh();
 	}
 
 	public void generateMesh()
